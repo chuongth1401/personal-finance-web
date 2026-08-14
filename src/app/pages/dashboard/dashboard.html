@@ -1,0 +1,43 @@
+@if (error()) {
+  <div class="bg-red-50 text-red-600 border border-red-200 rounded-lg p-3 text-sm">
+    {{ error() }}
+  </div>
+}
+
+<form class="bg-white rounded-lg shadow p-4 flex gap-3" (ngSubmit)="onSubmit()">
+  <input type="text" [(ngModel)]="newDescription" name="description" placeholder="Mô tả giao dịch" class="border rounded px-3 py-2 flex-1" />
+  <input type="number" [(ngModel)]="newAmount" name="amount" placeholder="Số tiền (âm nếu là chi)" class="border rounded px-3 py-2 w-48" />
+  <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Thêm</button>
+</form>
+
+<div class="bg-white rounded-lg shadow p-4 flex justify-between items-center">
+  <span class="text-slate-600">Số dư hiện tại</span>
+  <span class="text-xl font-bold" [class.text-red-500]="total() < 0" [class.text-green-600]="total() >= 0">
+    {{ total() | number }} đ
+  </span>
+</div>
+
+<div class="bg-white rounded-lg shadow p-4">
+  <h3 class="text-slate-600 mb-3">Biểu đồ chi tiêu theo ngày</h3>
+  <app-expense-chart [transactions]="transactions()" />
+</div>
+
+<div class="bg-white rounded-lg shadow divide-y">
+  @if (loading()) {
+    <p class="p-4 text-slate-400">Đang tải...</p>
+  } @else {
+    @for (t of transactions(); track t.id) {
+      <div class="flex justify-between items-center px-4 py-3">
+        <span>{{ t.description }}</span>
+        <div class="flex items-center gap-4">
+          <span [class.text-red-500]="t.type === 'EXPENSE'" [class.text-green-600]="t.type === 'INCOME'">
+            {{ t.amount | number }} đ
+          </span>
+          <button (click)="removeTransaction(t.id)" class="text-slate-400 hover:text-red-500">✕</button>
+        </div>
+      </div>
+    } @empty {
+      <p class="p-4 text-slate-400">Chưa có giao dịch nào</p>
+    }
+  }
+</div>

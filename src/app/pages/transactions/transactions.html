@@ -1,0 +1,28 @@
+<div class="space-y-4">
+  <div class="bg-white rounded-lg shadow p-4 flex items-center gap-3">
+    <label class="text-slate-600">Chọn tháng:</label>
+    <input
+      type="month"
+      [value]="selectedMonth()"
+      (change)="onMonthChange($any($event.target).value)"
+      class="border rounded px-3 py-2"
+    />
+  </div>
+
+  <div class="bg-white rounded-lg shadow divide-y">
+    @if (loading()) {
+      <p class="p-4 text-slate-400">Đang tải...</p>
+    } @else {
+      @for (t of transactions(); track t.id) {
+        <div class="flex justify-between items-center px-4 py-3">
+          <span>{{ t.description }}</span>
+          <span [class.text-red-500]="t.type === 'EXPENSE'" [class.text-green-600]="t.type === 'INCOME'">
+            {{ t.amount | number }} đ
+          </span>
+        </div>
+      } @empty {
+        <p class="p-4 text-slate-400">Không có giao dịch trong tháng này</p>
+      }
+    }
+  </div>
+</div>
